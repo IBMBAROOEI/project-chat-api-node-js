@@ -1,0 +1,39 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/index.js",
+  "build": "rimraf ./build && tsc",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "npx nodemon",
+    "typeorm": "ts-node-dev ./node_modules/typeorm/",
+    "dev": "npm run start:dev",
+    "migration:create": "typeorm migration:create ./src/migrations/schema-update",
+    "migration:generate": "npx typeorm-ts-node-commonjs migration:generate ./src/migrations/schema-update -d ./src/data-source.ts",
+    "migration:show": "npx typeorm-ts-node-commonjs migration:show -d ./src/data-source.ts",
+    "migration:run": "npx typeorm-ts-node-commonjs migration:run -d  ./src/data-source.ts",
+    "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d ./src/data-source.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "minimist": "^1.2.8",
+    "pg": "^8.11.3",
+    "reflect-metadata": "^0.2.1",
+    "socket.io": "^4.7.3",
+    "typeorm": "^0.3.20",
+    "typeorm-cli": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.17",
+    "nodemon": "^3.0.2",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
