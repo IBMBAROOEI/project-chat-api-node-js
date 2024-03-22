@@ -1,33 +1,64 @@
-// server.ts
-
-import express, { Application } from 'express';
-import TagRoute from './tag/routes/TagRoute';
-import CatRoute from './Category/routes/categoryRoute';
-import productRoute from './product/routes/productRoute';
-
-
+import express from 'express';
+import userRoute from './user/routes/userRoute';
+import messageRoute from './message/routes/messageRoute';
 import "reflect-metadata";
 
 import { AppDataSource } from "./data-source";
-const app: Application = express();
-const port = process.env.PORT || 5000;
+import passport from 'passport';
+import { Server, Socket } from 'socket.io';
+import socketIo from 'socket.io';
+import cors from 'cors';
+import http from 'http';
 
-// پارس کردن بدنه‌ی درخواست به صورت JSON
-app.use(express.json());
+// Create an Express app
+const app = express();
 
-// افزودن مسیرهای مربوط به محصولات
-app.use('/api', TagRoute);
-app.use('/api', CatRoute);
+// Enable Cross-Origin Resource Sharing (CORS)
+app.use(cors({
+  origin: '*'
+}));
 
-app.use('/api', productRoute);
+// Create an HTTP server using the Express app
+const server = http.createServer(app);
 
-
-
-
- AppDataSource.initialize()
-
-app.listen(port, () => {
-  console.log(`سرور در حال اجراست و درگاه ${port} را گوش می‌دهد.`);
+// Initialize Socket.IO
+const io = new socketIo.Server(server, {
+  cors: {
+    origin: '*',
+  }
 });
 
+// Set up passport for authentication
+app.use(passport.initialize());
 
+// Parse JSON request bodies
+app.use(express.json());
+
+// Define routes for user and message operations
+app.use('/api', userRoute);
+app.use('/api', messageRoute);
+
+// Initialize the data source (e.g., database connection)
+AppDataSource.initialize();
+
+// Handle Socket.IO connections
+io.on('connection', (socket: Socket) => {
+  console.log("A new user connected");
+
+  // Handle disconnection
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+
+  // Handle sending messages
+  socket.on("send_message", (message) => {
+    // Receive a message from a user and broadcast it to other connected users
+    io.emit("new_message", message);
+  });
+});
+
+// Start the server
+const port = process.env.PORT || 5000;
+server.listen(port, () => {
+  console.log(`Server is running and listening on port ${port}.`);
+});

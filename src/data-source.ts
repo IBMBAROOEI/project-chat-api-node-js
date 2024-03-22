@@ -1,23 +1,22 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Product } from "./product/entity/Product";
-import { Tag } from "./tag/entity/Tag";
-import { Category } from "./Category/entity/Category";
+import { User } from "./user/entity/User";
+import { Message } from "./message/entity/Message";
+
 
 export const AppDataSource = new DataSource({
-  type: "postgres",
+  type: "mongodb",
   host: "localhost",
-  port: 5432,
-  username: "marziye",
-  password: "123",
-  database: "m",
+  port: 27017,
+
+  database: "mychat",
   synchronize: true,
   logging: true,
-  entities: [Product,Tag,Category],
+  entities: [User,Message],
   subscribers: [],
-  migrations: [
-    "src/migrations/**/*.ts"
-  ]
+  // migrations: [
+  //   "src/migrations/**/*.ts"
+  // ]
 });
 
 
